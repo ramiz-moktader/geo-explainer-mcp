@@ -142,3 +142,6 @@ Execute these 5 phases strictly in order. Do not proceed to the next phase until
 - Offline/CI switches: `GEO_TTS=placeholder` (synthetic blips with exact timings), `GEO_ALIGN=estimate`, `GEO_BASEMAP=plain` (no tiles). `pytest tests/` runs without network or a browser.
 - The first build was verified with those offline stand-ins only. ESRI tiles, Edge-TTS, ElevenLabs and the faster-whisper model download have not yet been exercised end-to-end; verify them first when changing `MapCanvas.tsx` or `audio_aligner.py`.
 - `maplibre-gl` is pinned to v5 (`canvasContextAttributes.preserveDrawingBuffer`); `remotion` and `@remotion/cli` must stay on the same exact version.
+- `src/geo_mcp/tile_cache.py` (added later): local caching tile proxy + pre-download. The renderer gets its URL as `tile_url` in the timeline. Test it offline with `tests/fake_tile_server.py` (`GEO_TILE_URL=http://127.0.0.1:PORT/{z}/{x}/{y}`).
+- First Colab runs confirmed ESRI tiles, Edge-TTS and faster-whisper work. `GEO_GL=angle-egl` + `GEO_CHROME_MODE=chrome-for-testing` does use the GPU there but produced duplicated half-frames; treat GPU mode as experimental.
+- `GEO_FPS` (24-60) sets the frame rate; frame offsets authored at 60 fps are scaled.

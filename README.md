@@ -143,6 +143,8 @@ Check in the output: satellite imagery (not a flat blue/green map), a real voice
 | `GEO_GL` | Chromium GL backend: `swangle` (default on Linux, CPU), `angle`, `angle-egl` (Linux + NVIDIA GPU), `egl`, `vulkan` |
 | `GEO_CHROME_MODE` | `chrome-for-testing` lets Chrome use a Linux GPU (pair with `GEO_GL=angle-egl`). Experimental: the first Colab test with these two settings produced duplicated frames |
 | `GEO_BROWSER_EXECUTABLE` | use an existing Chrome instead of Remotion's download |
+| `GEO_TILE_URL` | any XYZ tile template with `{z}/{x}/{y}` to use instead of ESRI (fetched through the local tile cache) |
+| `GEO_TILE_PROXY=0` | turn the local tile cache off; the browser then fetches tiles itself (slower, can stall) |
 | `GEO_BASEMAP=plain` | key-free, tile-free vector basemap (offline / CI) |
 | `GEO_TTS=placeholder` | synthetic blip narration with exact word timings (offline / CI) |
 | `GEO_ALIGN=estimate` | skip Whisper, estimate word timings |
@@ -156,6 +158,12 @@ Check in the output: satellite imagery (not a flat blue/green map), a real voice
 4. Everything the renderer draws is a pure function of the frame number, and each frame is captured only after MapLibre reports `idle`, so renders are repeatable.
 
 If Whisper is unavailable, the pipeline falls back to Edge-TTS's own word boundaries, then to estimated timings, and says so in `warnings`.
+
+## Map tiles and speed
+
+Satellite tiles are not fetched by the browser. The worker starts a small local tile cache, downloads the tiles the camera path needs before rendering (16 at a time), and serves them from disk; tiles it did not predict are fetched on demand with a short timeout, and a failed tile becomes a blank square instead of stalling the render. Tiles are kept in `~/.cache/geo-explainer-mcp/tiles`, so re-rendering the same script needs no downloads. The end of each render reports tile counts, the average map wait per frame and how many frames hit the timeout.
+
+In an offline test against a deliberately slow tile server this halved render time (2 min 6 s to 1 min 4 s for 196 half-size frames). It has not yet been measured against the real ESRI server.
 
 ## Troubleshooting
 

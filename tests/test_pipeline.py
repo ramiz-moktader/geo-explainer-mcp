@@ -105,3 +105,34 @@ def test_mcp_surface():
     assert resources == {"geo://assets/catalog", "geo://schema/scene-graph"}
     assert cat["geojson"] and "example" in schema and "json_schema" in schema
     assert status.data["status"] == "error"
+
+
+def test_tile_cache_predicts_tiles_and_never_hangs(tmp_path, monkeypatch):
+    import subprocess
+    import sys
+    import time
+    from pathlib import Path
+
+    from geo_mcp.tile_cache import BLANK_PNG, TileProxy, tiles_for_timeline
+
+    monkeypatch.setenv("GEO_CACHE_DIR", str(tmp_path))
+    tiles = tiles_for_timeline({"scenes": example_scene_graph()["scenes"]})
+    assert 50 < len(tiles) < 3000 and all(0 <= y < 2**z for z, _, y in tiles)
+
+    # unreachable upstream: a blank tile comes back quickly, nothing is cached
+    dead = TileProxy("http://127.0.0.1:9/{z}/{x}/{y}", timeout=1, retries=1)
+    t0 = time.time()
+    data, _, ok = dead.get(5, 15, 10)
+    assert data == BLANK_PNG and not ok and time.time() - t0 < 5 and dead.stats["failed"] == 1
+
+    # working upstream: downloaded once, then served from disk
+    srv = subprocess.Popen([sys.executable, str(Path(__file__).parent / "fake_tile_server.py"), "8917"])
+    try:
+        time.sleep(1.5)
+        live = TileProxy("http://127.0.0.1:8917/{z}/{x}/{y}")
+        a, mime, ok = live.get(5, 15, 10)
+        b, _, _ = live.get(5, 15, 10)
+        assert ok and mime == "image/png" and a == b
+        assert live.stats == {"cached": 1, "downloaded": 1, "failed": 0}
+    finally:
+        srv.kill()

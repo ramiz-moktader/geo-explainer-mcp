@@ -21,6 +21,7 @@ from . import FPS
 from .audio_aligner import align_words, estimate_timings, split_words, synthesize_narration
 from .models import SceneGraph
 from .paths import cache_dir, ensure_renderer, npm_command
+from .tile_cache import TileProxy, prefetch
 from .timeline_compiler import compile_timeline, slugify, write_timeline
 
 Status = Callable[..., None]
@@ -85,6 +86,21 @@ def _extra_flags() -> list[str]:
     return flags
 
 
+def _start_tiles(timeline: dict, log: Optional[Callable[[str], None]] = None) -> Optional[TileProxy]:
+    """Routes satellite tiles through the local cache (disable with GEO_TILE_PROXY=0)."""
+    if timeline.get("basemap") != "satellite":
+        return None
+    if os.environ.get("GEO_TILE_PROXY", "1") == "0":
+        if os.environ.get("GEO_TILE_URL"):  # browser fetches the custom source directly
+            timeline["tile_url"] = os.environ["GEO_TILE_URL"]
+        return None
+    proxy = TileProxy()
+    timeline["tile_url"] = proxy.start()
+    timeline["maptiler_key"] = None  # the key, if any, is applied by the proxy
+    prefetch(proxy, timeline, log)
+    return proxy
+
+
 def run_pipeline(graph: SceneGraph, job_dir: Path, output_dir: Path, status: Status) -> Path:
     job_dir, output_dir = Path(job_dir), Path(output_dir).expanduser().resolve()
     public = job_dir / "public"
@@ -102,6 +118,8 @@ def run_pipeline(graph: SceneGraph, job_dir: Path, output_dir: Path, status: Sta
     status(status="compiling", progress=18, message=f"compiling timeline ({aligned['method']} timings)")
     timeline = compile_timeline(graph, aligned["word_timings"], tts["path"], aligned["duration"], public, warnings)
     timeline.update(tts_engine=tts["engine"], alignment_method=aligned["method"])
+    status(status="rendering", progress=19, message="preparing map tiles")
+    tiles = _start_tiles(timeline, log)
     props = write_timeline(timeline, job_dir / "compiled_timeline.json")
 
     status(status="rendering", progress=20, message="preparing renderer", warnings=warnings,
@@ -137,11 +155,18 @@ def run_pipeline(graph: SceneGraph, job_dir: Path, output_dir: Path, status: Sta
             last["p"] = pct
             status(progress=pct, message=f"{m.group(1).lower()} {done}/{n} frames")
 
-    _remotion(
-        ["render", "src/index.ts", COMPOSITION, str(out), f"--props={props}", f"--public-dir={public}",
-         "--log=verbose", *_extra_flags()],  # verbose: needed to receive the page's geo-timing lines
-        rdir, on_line,
-    )
+    try:
+        _remotion(
+            ["render", "src/index.ts", COMPOSITION, str(out), f"--props={props}", f"--public-dir={public}",
+             "--log=verbose", *_extra_flags()],  # verbose: needed to receive the page's geo-timing lines
+            rdir, on_line,
+        )
+    finally:
+        if tiles:
+            warnings.append(tiles.summary())
+            if tiles.stats["failed"]:
+                warnings.append(f"{tiles.stats['failed']} map tiles could not be downloaded and are blank in the video")
+            tiles.stop()
     if waits:
         warnings.append(
             f"render timing: map wait avg {sum(waits) / len(waits) / 1000:.2f}s per frame over {len(waits)} frames; "
@@ -167,14 +192,21 @@ def render_preview(graph: SceneGraph, scene_index: int, out_png: Path) -> Path:
     scene = timeline["scenes"][scene_index]
     # late in the scene, so every triggered element is on screen and the camera has settled
     frame = max(scene["start_frame"], scene["end_frame"] - max(1, round(12 * FPS / 60)))
+    tiles = _start_tiles({**timeline, "scenes": [scene]}, None)
+    if tiles:
+        timeline.update(tile_url=f"http://127.0.0.1:{tiles.port}/{{z}}/{{x}}/{{y}}", maptiler_key=None)
     props = write_timeline(timeline, work / "compiled_timeline.json")
     out_png = Path(out_png).expanduser().resolve()
     out_png.parent.mkdir(parents=True, exist_ok=True)
-    _remotion(
-        ["still", "src/index.ts", COMPOSITION, str(out_png), f"--props={props}", f"--public-dir={public}",
-         f"--frame={frame}", *[f for f in _extra_flags() if f.startswith("--scale")]],
-        ensure_renderer(),
-    )
+    try:
+        _remotion(
+            ["still", "src/index.ts", COMPOSITION, str(out_png), f"--props={props}", f"--public-dir={public}",
+             f"--frame={frame}", *[f for f in _extra_flags() if f.startswith("--scale")]],
+            ensure_renderer(),
+        )
+    finally:
+        if tiles:
+            tiles.stop()
     return out_png
 
 

@@ -82,9 +82,12 @@ const buildStyle = (timeline: Timeline): maplibregl.StyleSpecification => {
     sources.sat = {
       type: "raster",
       tiles: [
-        timeline.maptiler_key
-          ? `https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=${timeline.maptiler_key}`
-          : ESRI,
+        // tile_url is the local caching proxy started by worker.py (fast, never stalls)
+        timeline.tile_url
+          ? timeline.tile_url
+          : timeline.maptiler_key
+            ? `https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=${timeline.maptiler_key}`
+            : ESRI,
       ],
       tileSize: 256,
       maxzoom: 17,
