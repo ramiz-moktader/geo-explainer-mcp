@@ -268,16 +268,18 @@ export const MapCanvas: React.FC<{
       timeoutInMilliseconds: 120000,
     });
     let finished = false;
-    const finish = () => {
+    const t0 = performance.now();
+    const finish = (timedOut = false) => {
       if (finished) return;
       finished = true;
       clearTimeout(timer);
+      // parsed by worker.py to report where render time goes
+      console.log(`geo-timing ${frame} ${Math.round(performance.now() - t0)} ${timedOut === true ? 1 : 0}`);
       // One more animation frame so React's overlay commit is painted too.
       requestAnimationFrame(() => continueRender(handle));
     };
     const timer = setTimeout(() => {
-      console.warn(`maplibre: idle timeout on frame ${frame}, continuing`);
-      finish();
+      finish(true);
     }, IDLE_TIMEOUT_MS);
 
     const cam = cameraAtFrame(timeline.scenes, frame, fps);
@@ -306,11 +308,12 @@ export const MapCanvas: React.FC<{
     // re-projected right now, inside the delayRender window.
     setProjectedFrame(frame);
 
-    map.once("idle", finish);
+    const onIdle = () => finish(false);
+    map.once("idle", onIdle);
     map.triggerRepaint();
     return () => {
-      map.off("idle", finish);
-      finish();
+      map.off("idle", onIdle);
+      finish(false);
     };
   }, [frame, ready, fps, timeline, polyLayers]);
 

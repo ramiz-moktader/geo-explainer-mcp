@@ -112,7 +112,20 @@ def run_pipeline(graph: SceneGraph, job_dir: Path, output_dir: Path, status: Sta
     total = timeline["total_frames"]
     last = {"p": -1}
 
+    waits: list[int] = []
+    stats = {"timeouts": 0, "reported": 0}
+
     def on_line(line: str) -> None:
+        t = re.search(r"geo-timing (\d+) (\d+) ([01])", line)
+        if t:  # per-frame "map ready" wait, logged by MapCanvas.tsx
+            waits.append(int(t.group(2)))
+            stats["timeouts"] += int(t.group(3))
+            if len(waits) - stats["reported"] >= 40:
+                recent = waits[stats["reported"]:]
+                stats["reported"] = len(waits)
+                status(message=f"map wait per frame: avg {sum(recent) / len(recent) / 1000:.2f}s, "
+                               f"max {max(recent) / 1000:.1f}s, tile timeouts so far: {stats['timeouts']}")
+            return
         m = re.search(r"(Rendered|Encoded)\s+(\d+)/(\d+)", line)
         if not m:
             return
@@ -125,9 +138,15 @@ def run_pipeline(graph: SceneGraph, job_dir: Path, output_dir: Path, status: Sta
             status(progress=pct, message=f"{m.group(1).lower()} {done}/{n} frames")
 
     _remotion(
-        ["render", "src/index.ts", COMPOSITION, str(out), f"--props={props}", f"--public-dir={public}", *_extra_flags()],
+        ["render", "src/index.ts", COMPOSITION, str(out), f"--props={props}", f"--public-dir={public}",
+         "--log=verbose", *_extra_flags()],  # verbose: needed to receive the page's geo-timing lines
         rdir, on_line,
     )
+    if waits:
+        warnings.append(
+            f"render timing: map wait avg {sum(waits) / len(waits) / 1000:.2f}s per frame over {len(waits)} frames; "
+            f"{stats['timeouts']} frames hit the tile timeout"
+        )
     if not out.exists() or out.stat().st_size < 10_000:
         raise RuntimeError(f"renderer finished but {out} is missing or empty")
     status(status="done", progress=100, message="render complete", output_path=str(out),
