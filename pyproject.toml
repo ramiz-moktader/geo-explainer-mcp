@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "geo-explainer-mcp"
+version = "0.1.0"
+description = "MCP server that renders 9:16 animated map explainer shorts (MapLibre + Remotion) from a SceneGraph"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+  "fastmcp>=3.0.0",
+  "pydantic>=2.6",
+  "edge-tts>=7.0.0",
+  "faster-whisper>=1.1.0",
+  "numpy>=1.26",
+  "httpx>=0.27",
+]
+
+[project.scripts]
+geo-explainer-mcp = "geo_mcp.server:main"
+geo-explainer-render = "geo_mcp.worker:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/geo_mcp"]
+
+# Ship the Remotion app and the asset library inside the wheel so that
+# `uvx --from git+https://github.com/<user>/<repo> geo-explainer-mcp` is self-contained.
+[tool.hatch.build.targets.wheel.force-include]
+# Listed one by one: force-include ignores `exclude`, and node_modules must never be packaged.
+"renderer/src" = "geo_mcp/_bundle/renderer/src"
+"renderer/scripts" = "geo_mcp/_bundle/renderer/scripts"
+"renderer/package.json" = "geo_mcp/_bundle/renderer/package.json"
+"renderer/package-lock.json" = "geo_mcp/_bundle/renderer/package-lock.json"
+"renderer/tsconfig.json" = "geo_mcp/_bundle/renderer/tsconfig.json"
+"renderer/remotion.config.ts" = "geo_mcp/_bundle/renderer/remotion.config.ts"
+"assets" = "geo_mcp/_bundle/assets"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "renderer", "assets", "README.md", "CLAUDE.md", "pyproject.toml"]
+exclude = ["renderer/node_modules", "renderer/out", "renderer/demo"]

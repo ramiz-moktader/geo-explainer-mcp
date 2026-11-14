@@ -1,0 +1,56 @@
+{
+  "title": "England and Wales",
+  "narration": "England and Wales share one border. In twelve eighty three, England conquered Wales with castles. Today they are still two countries.",
+  "voice": "en-US-AndrewNeural",
+  "music_mood": "epic",
+  "scenes": [
+    {
+      "scene_id": "border",
+      "start_word": "England",
+      "camera": {"center": [-2.6, 52.6], "zoom": 5.6, "pitch": 0, "bearing": 0, "transition_sec": 1.0},
+      "polygons": [
+        {"geojson_file": "_starter_uk.geojson", "feature_id": "GB-ENG", "fill_color": "#e0314b", "border_color": "#ffffff", "opacity": 0.65},
+        {"geojson_file": "_starter_uk.geojson", "feature_id": "wales", "fill_color": "#27a85a", "border_color": "#ffffff", "opacity": 0.65, "trigger_word": "Wales"}
+      ],
+      "characters": [
+        {"id": "eng", "flag_code": "gb-eng", "coords": [-0.9, 52.7], "expression": "smug", "hat": "crown", "action": "bounce"},
+        {"id": "wls", "flag_code": "gb-wls", "coords": [-3.9, 52.3], "expression": "neutral", "action": "idle", "trigger_word": "Wales"}
+      ],
+      "labels": [{"text": "England", "coords": [-1.3, 54.0], "curve": 0.4, "style": "country"}],
+      "badges": [],
+      "sfx": [{"sound": "pop", "trigger_word": "Wales", "volume": 0.6}]
+    },
+    {
+      "scene_id": "conquest",
+      "start_word": "In twelve",
+      "camera": {"center": [-3.3, 52.6], "zoom": 6.3, "pitch": 25, "bearing": -8, "transition_sec": 1.2},
+      "polygons": [
+        {"geojson_file": "_starter_uk.geojson", "feature_id": "GB-ENG", "fill_color": "#e0314b", "border_color": "#ffffff", "opacity": 0.65},
+        {"geojson_file": "_starter_uk.geojson", "feature_id": "GB-WLS", "fill_color": "#27a85a", "border_color": "#ffffff", "opacity": 0.65, "transition_to_color": "#e0314b", "trigger_word": "conquered"}
+      ],
+      "characters": [
+        {"id": "eng", "flag_code": "gb-eng", "coords": [-1.6, 52.7], "expression": "angry", "hat": "helmet", "prop": "sword", "action": "slash"},
+        {"id": "wls", "flag_code": "gb-wls", "coords": [-3.9, 52.3], "expression": "shocked", "action": "shake"}
+      ],
+      "labels": [{"text": "Caernarfon", "coords": [-5.6, 53.9], "curve": 0, "style": "callout", "pointer_to": [-4.27, 53.14], "trigger_word": "castles"}],
+      "badges": [{"icon": "castle", "label": "1283", "screen_pos": [50, 15], "trigger_word": "twelve"}],
+      "sfx": [{"sound": "whoosh", "trigger_word": "In", "volume": 0.5}, {"sound": "clang", "trigger_word": "conquered", "volume": 0.7}]
+    },
+    {
+      "scene_id": "today",
+      "start_word": "Today",
+      "camera": {"center": [-2.6, 52.9], "zoom": 5.4, "pitch": 0, "bearing": 0, "transition_sec": 1.0},
+      "polygons": [
+        {"geojson_file": "_starter_uk.geojson", "feature_id": "GB-ENG", "fill_color": "#e0314b", "border_color": "#ffffff", "opacity": 0.65},
+        {"geojson_file": "_starter_uk.geojson", "feature_id": "GB-WLS", "fill_color": "#27a85a", "border_color": "#ffffff", "opacity": 0.65}
+      ],
+      "characters": [
+        {"id": "eng", "flag_code": "gb-eng", "coords": [-0.9, 52.7], "expression": "neutral", "action": "idle"},
+        {"id": "wls", "flag_code": "gb-wls", "coords": [-3.9, 52.3], "expression": "smug", "action": "grow", "trigger_word": "two"}
+      ],
+      "labels": [],
+      "badges": [{"icon": "passport", "label": "2 countries", "screen_pos": [50, 14], "trigger_word": "two"}],
+      "sfx": [{"sound": "ding", "trigger_word": "two", "volume": 0.5}]
+    }
+  ]
+}
