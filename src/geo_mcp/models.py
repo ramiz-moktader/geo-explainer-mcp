@@ -179,11 +179,11 @@ def example_scene_graph() -> dict:
                 ],
                 "characters": [
                     {"id": "sct", "flag_code": "gb-sct", "coords": [-4.0, 56.9], "expression": "neutral", "hat": None, "prop": "scroll", "action": "idle"},
-                    {"id": "nir", "flag_code": "gb-nir", "coords": [-6.8, 54.6], "expression": "sad", "hat": None, "prop": None, "action": "idle", "trigger_word": "Northern Ireland"},
+                    {"id": "nir", "flag_code": "gb-nir", "coords": [-8.6, 55.7], "expression": "sad", "hat": None, "prop": None, "action": "idle", "trigger_word": "Northern Ireland"},
                 ],
                 "labels": [
                     {"text": "Scotland", "coords": [-4.0, 58.0], "curve": 0.3, "style": "country"},
-                    {"text": "Act of Union 1707", "coords": [0.5, 56.8], "curve": 0, "style": "callout", "pointer_to": [-3.2, 55.95], "trigger_word": "treaty"},
+                    {"text": "Union 1707", "coords": [0.0, 55.3], "curve": 0, "style": "callout", "pointer_to": [-3.2, 55.95], "trigger_word": "treaty"},
                 ],
                 "badges": [],
                 "sfx": [{"sound": "ding", "trigger_word": "treaty", "volume": 0.5}],
