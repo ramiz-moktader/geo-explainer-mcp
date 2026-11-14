@@ -107,8 +107,40 @@ def synthesize_narration(text: str, voice: str, out_dir: Path, log: Log = None) 
 
 # ------------------------------------------------------------------ alignment
 
+def _decode_16k_mono(path: Path):
+    """Decodes audio to the float32 16 kHz mono array Whisper expects.
+
+    Done here, not by faster-whisper, because its own decoder passes arguments
+    that some PyAV releases reject (seen on Colab: `metadata_errors`).
+    """
+    import av
+    import numpy as np
+
+    resampler = av.AudioResampler(format="s16", layout="mono", rate=16000)
+    chunks = []
+    with av.open(str(path)) as container:
+        for frame in container.decode(audio=0):
+            out = resampler.resample(frame)
+            for f in out if isinstance(out, list) else [out]:
+                if f is not None:
+                    chunks.append(f.to_ndarray().reshape(-1))
+    try:  # flush
+        for f in resampler.resample(None) or []:
+            chunks.append(f.to_ndarray().reshape(-1))
+    except Exception:  # noqa: BLE001 - older PyAV cannot flush
+        pass
+    if not chunks:
+        raise RuntimeError(f"no audio decoded from {path}")
+    return np.concatenate(chunks).astype(np.float32) / 32768.0
+
+
 def _whisper_words(audio: Path, prompt: str) -> list[dict]:
     from faster_whisper import WhisperModel
+
+    try:
+        samples = _decode_16k_mono(audio)
+    except Exception:  # noqa: BLE001 - let faster-whisper try its own decoder
+        samples = str(audio)
 
     device, compute = "cpu", "int8"
     try:
@@ -125,7 +157,7 @@ def _whisper_words(audio: Path, prompt: str) -> list[dict]:
     def run(dev: str, ctype: str) -> list[dict]:
         model = WhisperModel(name, device=dev, compute_type=ctype)
         segments, _ = model.transcribe(
-            str(audio),
+            samples,
             word_timestamps=True,
             initial_prompt=prompt[:800],
             vad_filter=False,
