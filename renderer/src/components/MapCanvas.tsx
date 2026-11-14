@@ -208,7 +208,8 @@ export const MapCanvas: React.FC<{
       attributionControl: false,
       fadeDuration: 0,
       maxPitch: 75,
-      pixelRatio: 1,
+      // Follows Remotion's --scale (deviceScaleFactor): half-size drafts draw a quarter of the pixels.
+      pixelRatio: window.devicePixelRatio || 1,
       canvasContextAttributes: { preserveDrawingBuffer: true, antialias: true },
     });
     mapRef.current = map;
