@@ -63,7 +63,7 @@ export const SyncedCaptions: React.FC<{ timings: WordTiming[] }> = ({ timings })
         display: "flex",
         justifyContent: "center",
         flexWrap: "wrap",
-        gap: "0 28px",
+        gap: "0 40px",
         padding: "0 70px",
         boxSizing: "border-box",
         fontFamily: "'Arial Black', 'DejaVu Sans', Impact, sans-serif",
