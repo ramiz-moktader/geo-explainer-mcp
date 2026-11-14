@@ -120,20 +120,30 @@ def _whisper_words(audio: Path, prompt: str) -> list[dict]:
         pass
     device = os.environ.get("GEO_WHISPER_DEVICE", device)
     compute = os.environ.get("GEO_WHISPER_COMPUTE", "float16" if device == "cuda" else "int8")
-    model = WhisperModel(os.environ.get("GEO_WHISPER_MODEL", "base"), device=device, compute_type=compute)
-    segments, _ = model.transcribe(
-        str(audio),
-        word_timestamps=True,
-        initial_prompt=prompt[:800],
-        vad_filter=False,
-        condition_on_previous_text=False,
-    )
-    words = []
-    for seg in segments:
-        for w in seg.words or []:
-            if w.word.strip():
-                words.append({"word": w.word.strip(), "start": float(w.start), "end": float(w.end)})
-    return words
+    name = os.environ.get("GEO_WHISPER_MODEL", "base")
+
+    def run(dev: str, ctype: str) -> list[dict]:
+        model = WhisperModel(name, device=dev, compute_type=ctype)
+        segments, _ = model.transcribe(
+            str(audio),
+            word_timestamps=True,
+            initial_prompt=prompt[:800],
+            vad_filter=False,
+            condition_on_previous_text=False,
+        )
+        words = []
+        for seg in segments:  # lazy generator: GPU library errors surface here
+            for w in seg.words or []:
+                if w.word.strip():
+                    words.append({"word": w.word.strip(), "start": float(w.start), "end": float(w.end)})
+        return words
+
+    if device != "cpu":
+        try:
+            return run(device, compute)
+        except Exception:  # noqa: BLE001 - e.g. missing cuDNN/cuBLAS; a short clip is fine on CPU
+            pass
+    return run("cpu", "int8")
 
 
 def estimate_timings(script_words: list[str], duration: float) -> list[dict]:

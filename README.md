@@ -139,7 +139,8 @@ Check in the output: satellite imagery (not a flat blue/green map), a real voice
 | `GEO_ASSETS_DIR` | use this assets folder instead of the bundled one |
 | `GEO_RENDER_CONCURRENCY` | browser tabs used for rendering (default: Remotion's choice) |
 | `GEO_RENDER_SCALE` | e.g. `0.5` for fast 540×960 drafts |
-| `GEO_GL` | Chromium GL backend: `swangle` (default on Linux), `angle`, `egl`, `vulkan` |
+| `GEO_GL` | Chromium GL backend: `swangle` (default on Linux, CPU), `angle`, `angle-egl` (Linux + NVIDIA GPU), `egl`, `vulkan` |
+| `GEO_CHROME_MODE` | `chrome-for-testing` lets Chrome use a Linux GPU (pair with `GEO_GL=angle-egl`); untested so far |
 | `GEO_BROWSER_EXECUTABLE` | use an existing Chrome instead of Remotion's download |
 | `GEO_BASEMAP=plain` | key-free, tile-free vector basemap (offline / CI) |
 | `GEO_TTS=placeholder` | synthetic blip narration with exact word timings (offline / CI) |
