@@ -1,0 +1,359 @@
+{
+ "title": "Why is Chernobyl abandoned?",
+ "narration": "Why is Chernobyl abandoned? In April nineteen eighty-six, reactor four exploded in Soviet Ukraine. Radiation spread across Europe, and Belarus took much of the fallout. The city of Pripyat, home to nearly fifty thousand people, was emptied in a single afternoon. A thirty kilometre zone was sealed. Parts of it may stay unsafe for thousands of years.",
+ "voice": "en-US-AndrewNeural",
+ "music_mood": "tense",
+ "scenes": [
+  {
+   "scene_id": "hook",
+   "start_word": "Why",
+   "camera": {
+    "center": [
+     31.0,
+     49.3
+    ],
+    "zoom": 4.3,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.0
+   },
+   "polygons": [
+    {
+     "geojson_file": "world_countries.geojson",
+     "feature_id": "UKR",
+     "fill_color": "#2f6fd6",
+     "border_color": "#ffffff",
+     "opacity": 0.45
+    }
+   ],
+   "characters": [
+    {
+     "id": "ua",
+     "flag_code": "ua",
+     "coords": [
+      37.6,
+      49.2
+     ],
+     "expression": "sad",
+     "action": "idle"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Ukraine",
+     "coords": [
+      30.6,
+      48.7
+     ],
+     "curve": 0.2,
+     "style": "country"
+    },
+    {
+     "text": "Chernobyl",
+     "coords": [
+      27.5,
+      54.6
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      30.099,
+      51.389
+     ],
+     "trigger_word": "Chernobyl"
+    }
+   ],
+   "badges": [],
+   "sfx": [
+    {
+     "sound": "pop",
+     "trigger_word": "Chernobyl",
+     "volume": 0.5
+    }
+   ]
+  },
+  {
+   "scene_id": "explosion",
+   "start_word": "In April",
+   "camera": {
+    "center": [
+     30.1,
+     51.25
+    ],
+    "zoom": 7.6,
+    "pitch": 30,
+    "bearing": -10,
+    "transition_sec": 1.6
+   },
+   "polygons": [
+    {
+     "geojson_file": "chernobyl_zone.geojson",
+     "feature_id": "CHERNOBYL-30KM",
+     "fill_color": "#ffd21f",
+     "border_color": "#ffd21f",
+     "opacity": 0.35,
+     "transition_to_color": "#e0314b",
+     "trigger_word": "exploded"
+    }
+   ],
+   "characters": [
+    {
+     "id": "ua",
+     "flag_code": "ua",
+     "coords": [
+      30.75,
+      50.95
+     ],
+     "expression": "shocked",
+     "action": "shake",
+     "trigger_word": "exploded"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Reactor 4",
+     "coords": [
+      29.2,
+      51.95
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      30.099,
+      51.389
+     ],
+     "trigger_word": "reactor"
+    }
+   ],
+   "badges": [
+    {
+     "icon": "radiation",
+     "label": "26 April 1986",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "April"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "whoosh",
+     "trigger_word": "In",
+     "volume": 0.5
+    },
+    {
+     "sound": "thud",
+     "trigger_word": "exploded",
+     "volume": 0.9
+    }
+   ]
+  },
+  {
+   "scene_id": "fallout",
+   "start_word": "Radiation spread",
+   "camera": {
+    "center": [
+     24.0,
+     53.0
+    ],
+    "zoom": 3.5,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.6
+   },
+   "polygons": [
+    {
+     "geojson_file": "world_countries.geojson",
+     "feature_id": "UKR",
+     "fill_color": "#2f6fd6",
+     "border_color": "#ffffff",
+     "opacity": 0.45
+    },
+    {
+     "geojson_file": "world_countries.geojson",
+     "feature_id": "BLR",
+     "fill_color": "#27a85a",
+     "border_color": "#ffffff",
+     "opacity": 0.55,
+     "transition_to_color": "#ffd21f",
+     "trigger_word": "Belarus"
+    }
+   ],
+   "characters": [
+    {
+     "id": "by",
+     "flag_code": "by",
+     "coords": [
+      34.5,
+      56.0
+     ],
+     "expression": "sad",
+     "action": "shake",
+     "trigger_word": "Belarus"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Belarus",
+     "coords": [
+      27.8,
+      56.6
+     ],
+     "curve": 0.3,
+     "style": "country",
+     "trigger_word": "Belarus"
+    },
+    {
+     "text": "Europe",
+     "coords": [
+      9.0,
+      49.5
+     ],
+     "curve": 0.2,
+     "style": "country",
+     "trigger_word": "Europe"
+    }
+   ],
+   "badges": [
+    {
+     "icon": "radiation",
+     "label": "Fallout",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "fallout"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "whoosh",
+     "trigger_word": "Radiation",
+     "volume": 0.6
+    }
+   ]
+  },
+  {
+   "scene_id": "pripyat",
+   "start_word": "The city",
+   "camera": {
+    "center": [
+     30.08,
+     51.36
+    ],
+    "zoom": 8.6,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.8
+   },
+   "polygons": [
+    {
+     "geojson_file": "chernobyl_zone.geojson",
+     "feature_id": "CHERNOBYL-30KM",
+     "fill_color": "#e0314b",
+     "border_color": "#ffd21f",
+     "opacity": 0.2
+    }
+   ],
+   "characters": [
+    {
+     "id": "ua",
+     "flag_code": "ua",
+     "coords": [
+      30.3,
+      51.22
+     ],
+     "expression": "sad",
+     "action": "idle"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Pripyat",
+     "coords": [
+      29.85,
+      51.52
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      30.057,
+      51.405
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "icon": "passport",
+     "label": "49,000 people",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "fifty"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "ding",
+     "trigger_word": "emptied",
+     "volume": 0.5
+    }
+   ]
+  },
+  {
+   "scene_id": "zone",
+   "start_word": "A thirty",
+   "camera": {
+    "center": [
+     30.1,
+     51.33
+    ],
+    "zoom": 7.9,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.2
+   },
+   "polygons": [
+    {
+     "geojson_file": "chernobyl_zone.geojson",
+     "feature_id": "CHERNOBYL-30KM",
+     "fill_color": "#e0314b",
+     "border_color": "#ffd21f",
+     "opacity": 0.45
+    }
+   ],
+   "characters": [],
+   "labels": [
+    {
+     "text": "30 km zone",
+     "coords": [
+      30.1,
+      51.72
+     ],
+     "curve": 0.5,
+     "style": "country"
+    }
+   ],
+   "badges": [
+    {
+     "icon": "clock",
+     "label": "1000s of years",
+     "screen_pos": [
+      50,
+      15
+     ],
+     "trigger_word": "thousands"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "clang",
+     "trigger_word": "sealed",
+     "volume": 0.7
+    }
+   ]
+  }
+ ]
+}
