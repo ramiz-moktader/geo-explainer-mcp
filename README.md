@@ -11,6 +11,15 @@ SceneGraph ─▶ TTS (Edge-TTS / ElevenLabs) ─▶ word alignment (faster-whis
 
 > **Status of this first build.** The whole pipeline was built and rendered end-to-end in a sandbox with **no access to map tiles, Edge-TTS or the Whisper model**, so it was verified with offline stand-ins (plain vector basemap, synthetic "blip" narration with exact timings). The real satellite, TTS, ElevenLabs and Whisper paths are implemented but **have not been run yet** — run the [first-run check](#first-run-check) on your machine before relying on them.
 
+## Two ways to use it (both free)
+
+| | Where it renders | How |
+| --- | --- | --- |
+| **From Claude** | your computer | connect the MCP server: [`setup/CLAUDE_SETUP.md`](setup/CLAUDE_SETUP.md) |
+| **On Colab** | Google's machine | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ramiz-moktader/geo-explainer-mcp/blob/main/colab/geo_explainer_colab.ipynb) then paste a SceneGraph JSON |
+
+The Colab notebook has not been run on Colab yet; expect to adjust the setup cell once.
+
 ## Requirements
 
 | Needed | Why |
@@ -41,16 +50,16 @@ Tips:
 - `_starter_uk.geojson` (rough England / Scotland / Wales / Northern Ireland shapes) is only there so tests work on an empty repo. Delete it whenever you like.
 - Other optional folders: `assets/flags/<code>.svg|png` (custom flags), `assets/props/<name>.svg` (hats, hand props, badge icons), `assets/sfx/<name>.wav` (overrides the synthesized whoosh/pop/thud/clang/ding), `assets/music/<mood>.mp3|wav` (background beds).
 
-Because assets ship inside the package, **`uvx` picks up new files after you push** and refresh: `uvx --refresh --from git+https://github.com/<user>/<repo> geo-explainer-mcp`. For local iteration without pushing, point the server at a folder: `GEO_ASSETS_DIR=/path/to/assets`.
+Because assets ship inside the package, **`uvx` picks up new files after you push** and refresh: `uvx --refresh --from git+https://github.com/ramiz-moktader/geo-explainer-mcp geo-explainer-mcp`. For local iteration without pushing, point the server at a folder: `GEO_ASSETS_DIR=/path/to/assets`.
 
 ## 2. Connect it
 
-Replace `<user>/<repo>` with your GitHub path.
+Step-by-step version for beginners: [`setup/CLAUDE_SETUP.md`](setup/CLAUDE_SETUP.md).
 
 **Claude Code**
 
 ```bash
-claude mcp add geo-explainer -- uvx --from git+https://github.com/<user>/<repo> geo-explainer-mcp
+claude mcp add geo-explainer -- uvx --from git+https://github.com/ramiz-moktader/geo-explainer-mcp geo-explainer-mcp
 ```
 
 **Claude Desktop** — Settings → Developer → Edit Config (`claude_desktop_config.json`):
@@ -60,7 +69,7 @@ claude mcp add geo-explainer -- uvx --from git+https://github.com/<user>/<repo> 
   "mcpServers": {
     "geo-explainer": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/<user>/<repo>", "geo-explainer-mcp"]
+      "args": ["--from", "git+https://github.com/ramiz-moktader/geo-explainer-mcp", "geo-explainer-mcp"]
     }
   }
 }
@@ -73,7 +82,7 @@ claude mcp add geo-explainer -- uvx --from git+https://github.com/<user>/<repo> 
   "mcpServers": {
     "geo-explainer": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/<user>/<repo>", "geo-explainer-mcp"],
+      "args": ["--from", "git+https://github.com/ramiz-moktader/geo-explainer-mcp", "geo-explainer-mcp"],
       "timeout": 600000
     }
   }
@@ -85,7 +94,7 @@ Add keys with an `"env": { "ELEVENLABS_API_KEY": "..." }` block in either JSON c
 **Remote / VPS (HTTP transport)**
 
 ```bash
-uvx --from git+https://github.com/<user>/<repo> geo-explainer-mcp --http --port 8000
+uvx --from git+https://github.com/ramiz-moktader/geo-explainer-mcp geo-explainer-mcp --http --port 8000
 # MCP endpoint: http://<host>:8000/mcp   (put it behind your own auth/reverse proxy)
 ```
 

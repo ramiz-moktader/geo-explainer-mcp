@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "geo-explainer": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/ramiz-moktader/geo-explainer-mcp",
+        "geo-explainer-mcp"
+      ]
+    }
+  }
+}
