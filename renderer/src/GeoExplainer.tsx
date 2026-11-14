@@ -23,7 +23,7 @@ const MUSIC_OPEN = 0.3;
 const TitleCard: React.FC<{ title: string }> = ({ title }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const s = popIn(frame, 4, fps, 12);
+  const s = popIn(frame, Math.round(fps / 15), fps, 12);
   const out = interpolate(frame, [fps * 2.6, fps * 3], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",

@@ -21,6 +21,11 @@ def to_frame(sec: float) -> int:
     return int(round(sec * FPS))
 
 
+def _f(frames_at_60: int) -> int:
+    """Scales a frame count authored at 60 fps to the active frame rate."""
+    return max(1, round(frames_at_60 * FPS / 60))
+
+
 class WordIndex:
     """Fuzzy, order-aware lookup of words/phrases in the narration's word timings."""
 
@@ -119,7 +124,7 @@ def compile_timeline(
                         f"scene '{scene.scene_id}': trigger_word '{word}' for {what} is spoken after this scene ends; "
                         "firing at the end of the scene"
                     )
-                    return max(s_frame, e_frame - 20)
+                    return max(s_frame, e_frame - _f(20))
             if idx is None:
                 warnings.append(
                     f"scene '{scene.scene_id}': trigger_word '{word}' for {what} not found in the narration; using scene start"
@@ -142,7 +147,7 @@ def compile_timeline(
                     "geojson_path": str(path),
                     "feature": feature,
                     "start_frame": s_frame if has_transition or tf is None else tf,
-                    "trigger_frame": (tf if tf is not None else s_frame + FPS // 2) if has_transition else None,
+                    "trigger_frame": (tf if tf is not None else s_frame + _f(30)) if has_transition else None,
                 }
             )
 
@@ -158,7 +163,7 @@ def compile_timeline(
             characters.append(
                 {
                     **c.model_dump(),
-                    "start_frame": tf if tf is not None else s_frame + 6,
+                    "start_frame": tf if tf is not None else s_frame + _f(6),
                     "flag_src": flag,
                     "hat_src": prop_data_uri(c.hat),
                     "prop_src": prop_data_uri(c.prop),
@@ -166,13 +171,13 @@ def compile_timeline(
             )
 
         labels = [
-            {**l.model_dump(), "start_frame": (t if (t := trigger(l.trigger_word, f"label {l.text}")) is not None else s_frame + 10)}
+            {**l.model_dump(), "start_frame": (t if (t := trigger(l.trigger_word, f"label {l.text}")) is not None else s_frame + _f(10))}
             for l in scene.labels
         ]
         badges = [
             {
                 **b.model_dump(),
-                "start_frame": (t if (t := trigger(b.trigger_word, f"badge {b.label}")) is not None else s_frame + 14),
+                "start_frame": (t if (t := trigger(b.trigger_word, f"badge {b.label}")) is not None else s_frame + _f(14)),
                 "icon_src": prop_data_uri(b.icon),
             }
             for b in scene.badges

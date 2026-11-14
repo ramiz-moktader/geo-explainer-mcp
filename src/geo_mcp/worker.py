@@ -147,7 +147,7 @@ def render_preview(graph: SceneGraph, scene_index: int, out_png: Path) -> Path:
     timeline = compile_timeline(graph, estimate_timings(words, duration), None, duration, public, [])
     scene = timeline["scenes"][scene_index]
     # late in the scene, so every triggered element is on screen and the camera has settled
-    frame = max(scene["start_frame"], scene["end_frame"] - 12)
+    frame = max(scene["start_frame"], scene["end_frame"] - max(1, round(12 * FPS / 60)))
     props = write_timeline(timeline, work / "compiled_timeline.json")
     out_png = Path(out_png).expanduser().resolve()
     out_png.parent.mkdir(parents=True, exist_ok=True)

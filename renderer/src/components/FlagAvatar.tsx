@@ -153,7 +153,7 @@ export const FlagAvatar: React.FC<{ character: CompiledCharacter }> = ({ charact
     dx = Math.sin(sec * 46) * 9 * decay;
     tilt = Math.sin(sec * 38) * 4 * decay;
   } else if (action === "grow") {
-    scale *= interpolate(popIn(frame, character.start_frame + 10, fps, 9), [0, 1], [1, 1.35]);
+    scale *= interpolate(popIn(frame, character.start_frame + Math.round(fps / 6), fps, 9), [0, 1], [1, 1.35]);
   } else if (action === "slash") {
     const cyc = (sec % 1.1) / 1.1;
     const swing = interpolate(cyc, [0, 0.25, 0.42, 1], [-70, -95, 55, -70]);

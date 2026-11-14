@@ -27,7 +27,7 @@ export const CurvedMapLabel: React.FC<{ label: CompiledLabel; uid: string }> = (
   const pathId = `label-path-${uid}`;
   const d = `M ${x - half} ${y - sag / 2} Q ${x} ${y + sag * 1.5 - sag / 2} ${x + half} ${y - sag / 2}`;
   const appear = popIn(frame, label.start_frame, fps, 14);
-  const opacity = fade(frame, label.start_frame, 8);
+  const opacity = fade(frame, label.start_frame, Math.max(1, Math.round((8 * fps) / 60)));
   const fill = callout ? "#ffe45c" : "#ffffff";
 
   let pointer: React.ReactNode = null;

@@ -32,8 +32,9 @@ const Ctx = createContext<MapCtx>({ project: () => null, ready: false });
 export const useMapProjection = () => useContext(Ctx);
 
 const IDLE_TIMEOUT_MS = 8000;
-const FADE_FRAMES = 14;
-const BLEND_FRAMES = 24;
+// authored at 60 fps; scaled to the composition frame rate
+const FADE_FRAMES_60 = 14;
+const BLEND_FRAMES_60 = 24;
 
 const ESRI =
   "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
@@ -145,8 +146,11 @@ const collectPolyLayers = (timeline: Timeline): PolyLayer[] => {
   return out;
 };
 
-const polyPaintAt = (l: PolyLayer, frame: number) => {
+const polyPaintAt = (l: PolyLayer, frame: number, fps: number) => {
   const { poly } = l;
+  const k = fps / 60;
+  const FADE_FRAMES = Math.max(1, Math.round(FADE_FRAMES_60 * k));
+  const BLEND_FRAMES = Math.max(1, Math.round(BLEND_FRAMES_60 * k));
   const start = poly.start_frame;
   if (frame < start || frame >= l.sceneEnd) return { color: poly.fill_color, alpha: 0 };
   let alpha = l.continues
@@ -155,7 +159,7 @@ const polyPaintAt = (l: PolyLayer, frame: number) => {
         extrapolateRight: "clamp",
       });
   if (!l.persists) {
-    alpha *= interpolate(frame, [l.sceneEnd - 8, l.sceneEnd], [1, 0], {
+    alpha *= interpolate(frame, [l.sceneEnd - Math.max(1, Math.round(8 * k)), l.sceneEnd], [1, 0], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
@@ -290,7 +294,7 @@ export const MapCanvas: React.FC<{
       map.setPaintProperty(layer, prop, value);
     };
     for (const l of polyLayers) {
-      const { color, alpha } = polyPaintAt(l, frame);
+      const { color, alpha } = polyPaintAt(l, frame, fps);
       set(`${l.id}-fill`, "fill-color", color);
       set(`${l.id}-fill`, "fill-opacity", +(alpha * l.poly.opacity).toFixed(4));
       set(`${l.id}-line`, "line-opacity", +alpha.toFixed(4));
