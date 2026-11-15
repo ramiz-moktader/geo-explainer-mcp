@@ -80,6 +80,29 @@ def synthesize_narration(text: str, voice: str, out_dir: Path, log: Log = None) 
     out_dir.mkdir(parents=True, exist_ok=True)
     mode = os.environ.get("GEO_TTS", "").lower()
 
+    if os.environ.get("GEO_NARRATION_AUDIO"):
+        # A ready-made voiceover (recorded, or generated elsewhere). Optional GEO_WORD_TIMINGS points
+        # to a JSON list of {"word"|"text", "start", "end"} from any transcription service.
+        import json
+        import shutil
+
+        src = Path(os.environ["GEO_NARRATION_AUDIO"]).expanduser()
+        if not src.exists():
+            raise RuntimeError(f"GEO_NARRATION_AUDIO file not found: {src}")
+        path = out_dir / f"narration{src.suffix.lower() or '.mp3'}"
+        shutil.copyfile(src, path)
+        hints = []
+        if os.environ.get("GEO_WORD_TIMINGS"):
+            raw = json.loads(Path(os.environ["GEO_WORD_TIMINGS"]).expanduser().read_text(encoding="utf-8"))
+            raw = raw.get("words", raw) if isinstance(raw, dict) else raw
+            for w in raw:
+                text = str(w.get("word", w.get("text", ""))).strip()
+                if text and norm(text) and w.get("start") is not None:
+                    hints.append({"word": text, "start": float(w["start"]), "end": float(w.get("end", w["start"]))})
+        if log:
+            log(f"using supplied narration audio {src.name}" + (f" with {len(hints)} supplied word timings" if hints else ""))
+        return {"path": path, "engine": "file", "hints": hints, "exact": False, "prefer_hints": bool(hints)}
+
     if mode == "placeholder":
         from .sfx_synthesizer import synthesize_placeholder_narration
 
@@ -274,6 +297,14 @@ def align_words(audio: Path, narration: str, tts: Optional[dict] = None, log: Lo
 
     if tts.get("exact") and len(tts.get("hints", [])) == len(script):
         return {"word_timings": tts["hints"], "method": "synthetic-exact", "duration": duration, "warnings": warnings}
+
+    if tts.get("prefer_hints"):
+        return {
+            "word_timings": map_script_to_heard(script, tts["hints"], duration),
+            "method": "supplied-timings",
+            "duration": duration,
+            "warnings": warnings,
+        }
 
     if os.environ.get("GEO_ALIGN", "").lower() != "estimate":
         try:

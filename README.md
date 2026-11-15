@@ -135,6 +135,8 @@ Check in the output: satellite imagery (not a flat blue/green map), a real voice
 | --- | --- |
 | `ELEVENLABS_API_KEY` | use ElevenLabs (`eleven_turbo_v2_5`); `voice` is then an ElevenLabs voice id (or set `ELEVENLABS_VOICE_ID`) |
 | `MAPTILER_API_KEY` | MapTiler satellite tiles instead of ESRI World Imagery |
+| `GEO_NARRATION_AUDIO` | path to a ready-made voiceover (mp3/wav) to use instead of generating one; the script's `narration` must match what is spoken |
+| `GEO_WORD_TIMINGS` | optional JSON list of `{word, start, end}` for that audio (otherwise Whisper aligns it) |
 | `GEO_WHISPER_MODEL` | faster-whisper model, default `base` (`small` is more accurate, slower) |
 | `GEO_ASSETS_DIR` | use this assets folder instead of the bundled one |
 | `GEO_RENDER_CONCURRENCY` | browser tabs used for rendering (default: Remotion's choice) |

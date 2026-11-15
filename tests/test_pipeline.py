@@ -136,3 +136,21 @@ def test_tile_cache_predicts_tiles_and_never_hangs(tmp_path, monkeypatch):
         assert live.stats == {"cached": 1, "downloaded": 1, "failed": 0}
     finally:
         srv.kill()
+
+
+def test_supplied_narration_and_timings(tmp_path, monkeypatch):
+    from geo_mcp.audio_aligner import align_words, synthesize_narration
+    from geo_mcp.sfx_synthesizer import synthesize_placeholder_narration
+
+    text = "Scotland joined England by treaty."
+    wav, timings = synthesize_placeholder_narration(split_words(text), tmp_path / "voice.wav")
+    heard = [{"text": w["word"].strip(".").upper(), "start": w["start"], "end": w["end"]} for w in timings]
+    (tmp_path / "words.json").write_text(json.dumps({"words": heard}))
+    monkeypatch.setenv("GEO_NARRATION_AUDIO", str(wav))
+    monkeypatch.setenv("GEO_WORD_TIMINGS", str(tmp_path / "words.json"))
+    tts = synthesize_narration(text, "ignored", tmp_path / "out")
+    assert tts["engine"] == "file" and tts["path"].exists()
+    res = align_words(tts["path"], text, tts)
+    assert res["method"] == "supplied-timings"
+    assert [w["word"] for w in res["word_timings"]] == split_words(text)
+    assert res["word_timings"][3]["start"] == pytest.approx(timings[3]["start"])
