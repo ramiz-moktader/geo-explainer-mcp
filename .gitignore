@@ -9,3 +9,5 @@ renders/
 renderer/out/
 renderer/demo/
 .DS_Store
+# Local secrets written by `elevenlabs onboard`
+/.env
