@@ -304,9 +304,14 @@ def cli(argv: Optional[list[str]] = None) -> int:
         print(f"{len(words)} words, roughly {dur:.0f}s of narration, {len(tl['scenes'])} scenes")
         for sc in tl["scenes"]:
             print(f"  scene '{sc['scene_id']}' starts at about {sc['start_frame'] / tl['fps']:.1f}s")
+        from .asset_catalog import _flag_icons_dir
+
+        if not _flag_icons_dir().is_dir():  # flags come from an npm package
+            found = [w for w in found if not w.startswith("flag '")]
+            print("note: flag codes not checked yet (run `npm install` in renderer/ first)")
         for w in found:
             print("warning:", w)
-        print("OK" if not found else f"{len(found)} warning(s): fix the trigger words above")
+        print("OK" if not found else f"{len(found)} warning(s): fix the items above")
         return 0 if not found else 2
 
     if args.preview is not None:
