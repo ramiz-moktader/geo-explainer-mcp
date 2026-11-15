@@ -139,6 +139,7 @@ export interface Timeline {
   sfx_events: SfxEvent[];
   basemap: "satellite" | "plain";
   maptiler_key?: string | null;
+  map_detail?: number; // 0.3-1: map canvas resolution relative to the output
   tile_url?: string | null; // XYZ template of the local tile cache proxy
   show_title?: boolean;
   [key: string]: unknown;

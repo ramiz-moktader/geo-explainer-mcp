@@ -69,6 +69,14 @@ class WordIndex:
         return to_frame(self.timings[idx]["start"])
 
 
+def _map_detail() -> float:
+    """GEO_MAP_DETAIL: map canvas resolution relative to the output (0.3-1, default 0.75)."""
+    try:
+        return min(1.0, max(0.3, float(os.environ.get("GEO_MAP_DETAIL", "0.75"))))
+    except ValueError:
+        return 0.75
+
+
 def compile_timeline(
     graph: SceneGraph,
     word_timings: list[dict],
@@ -247,6 +255,7 @@ def compile_timeline(
         "basemap": "plain" if basemap == "plain" else "satellite",
         "maptiler_key": os.environ.get("MAPTILER_API_KEY") or None,
         "show_title": os.environ.get("GEO_SHOW_TITLE", "1") != "0",
+        "map_detail": _map_detail(),
         "warnings": warnings,
     }
 

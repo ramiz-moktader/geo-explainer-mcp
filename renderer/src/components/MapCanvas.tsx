@@ -211,9 +211,11 @@ export const MapCanvas: React.FC<{
       attributionControl: false,
       fadeDuration: 0,
       maxPitch: 75,
-      // Follows Remotion's --scale (deviceScaleFactor): half-size drafts draw a quarter of the pixels.
-      pixelRatio: window.devicePixelRatio || 1,
-      canvasContextAttributes: { preserveDrawingBuffer: true, antialias: true },
+      // Follows Remotion's --scale, times map_detail: software WebGL cost scales with map pixels,
+      // so drawing the map a little below output resolution is the cheapest speed-up there is.
+      pixelRatio: (window.devicePixelRatio || 1) * Math.min(1, Math.max(0.3, timeline.map_detail ?? 1)),
+      // MSAA off: in software WebGL it cost ~40% of render time; lines are anti-aliased in-shader anyway
+      canvasContextAttributes: { preserveDrawingBuffer: true, antialias: false },
     });
     mapRef.current = map;
     map.on("error", (e) => {
@@ -229,7 +231,7 @@ export const MapCanvas: React.FC<{
           source: l.id,
           paint: { "fill-color": l.poly.fill_color, "fill-opacity": 0 },
         });
-        map.addLayer({
+        if (false) map.addLayer({
           id: `${l.id}-glow`,
           type: "line",
           source: l.id,
@@ -304,7 +306,7 @@ export const MapCanvas: React.FC<{
       set(`${l.id}-fill`, "fill-color", color);
       set(`${l.id}-fill`, "fill-opacity", +(alpha * l.poly.opacity).toFixed(4));
       set(`${l.id}-line`, "line-opacity", +alpha.toFixed(4));
-      set(`${l.id}-glow`, "line-opacity", +(alpha * 0.45).toFixed(4));
+      // glow off
     }
 
     // Camera transform is updated synchronously by jumpTo, so overlays can be

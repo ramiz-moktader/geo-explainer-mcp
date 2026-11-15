@@ -145,3 +145,4 @@ Execute these 5 phases strictly in order. Do not proceed to the next phase until
 - `src/geo_mcp/tile_cache.py` (added later): local caching tile proxy + pre-download. The renderer gets its URL as `tile_url` in the timeline. Test it offline with `tests/fake_tile_server.py` (`GEO_TILE_URL=http://127.0.0.1:PORT/{z}/{x}/{y}`).
 - First Colab runs confirmed ESRI tiles, Edge-TTS and faster-whisper work. `GEO_GL=angle-egl` + `GEO_CHROME_MODE=chrome-for-testing` does use the GPU there but produced duplicated half-frames; treat GPU mode as experimental.
 - `GEO_FPS` (24-60) sets the frame rate; frame offsets authored at 60 fps are scaled.
+- Render cost (benchmarked on 2 CPU cores, software WebGL): nearly all per-frame time is the WebGL map; overlays, `delayRender` and screenshots of a static bitmap are cheap. MSAA off and `GEO_MAP_DETAIL` are the levers that helped; copying the map to a 2D canvas and skipping redraws of unchanged frames did not.

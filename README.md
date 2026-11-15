@@ -139,9 +139,10 @@ Check in the output: satellite imagery (not a flat blue/green map), a real voice
 | `GEO_ASSETS_DIR` | use this assets folder instead of the bundled one |
 | `GEO_RENDER_CONCURRENCY` | browser tabs used for rendering (default: Remotion's choice) |
 | `GEO_FPS` | frame rate, default `60`; `30` halves render time (24-60) |
+| `GEO_MAP_DETAIL` | map resolution relative to the output, `0.3`-`1`, default `0.75`. Lower is faster and softer (`0.5` was about 1.9x faster than `1` in a CPU benchmark); labels, flags and captions stay sharp |
 | `GEO_RENDER_SCALE` | e.g. `0.5` for fast 540×960 drafts |
 | `GEO_GL` | Chromium GL backend: `swangle` (default on Linux, CPU), `angle`, `angle-egl` (Linux + NVIDIA GPU), `egl`, `vulkan` |
-| `GEO_CHROME_MODE` | `chrome-for-testing` lets Chrome use a Linux GPU (pair with `GEO_GL=angle-egl`). Experimental: the first Colab test with these two settings produced duplicated frames |
+| `GEO_CHROME_MODE` | `chrome-for-testing` (pair with `GEO_GL=angle-egl`) to try a Linux GPU. Not usable on Colab so far: both test renders came out with tiled, broken frames |
 | `GEO_BROWSER_EXECUTABLE` | use an existing Chrome instead of Remotion's download |
 | `GEO_TILE_URL` | any XYZ tile template with `{z}/{x}/{y}` to use instead of ESRI (fetched through the local tile cache) |
 | `GEO_TILE_PROXY=0` | turn the local tile cache off; the browser then fetches tiles itself (slower, can stall) |
