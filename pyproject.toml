@@ -40,3 +40,6 @@ packages = ["src/geo_mcp"]
 [tool.hatch.build.targets.sdist]
 include = ["src", "renderer", "assets", "README.md", "CLAUDE.md", "pyproject.toml"]
 exclude = ["renderer/node_modules", "renderer/out", "renderer/demo"]
+
+[dependency-groups]
+dev = ["pytest>=8"]

@@ -1,5 +1,9 @@
 # Run it from Google Antigravity (Gemini)
 
+**Easiest way:** open a clone of this repository as the Antigravity workspace and tell the agent:
+"Read `docs/MAKE_A_VIDEO.md` and follow it to make a 35-second video about <topic>." No MCP setup is needed for that.
+The rest of this page is the alternative: connecting the project as an MCP server.
+
 Antigravity runs on your own computer, so the video is rendered there. Gemini writes the script and drives the tools.
 This setup has not been tested by the project author; the steps follow Antigravity's standard way of adding a custom MCP server.
 

@@ -259,7 +259,30 @@ def cli(argv: Optional[list[str]] = None) -> int:
     ap.add_argument("--out", default="./renders", help="output directory")
     ap.add_argument("--job-dir", help=argparse.SUPPRESS)
     ap.add_argument("--preview", type=int, metavar="SCENE", help="render a single PNG of this scene index instead")
+    ap.add_argument("--catalog", action="store_true", help="print the region ids, props, flags and SFX a script may use")
+    ap.add_argument("--schema", action="store_true", help="print the SceneGraph JSON schema and a working example")
+    ap.add_argument("--check", action="store_true", help="validate the script and its trigger words without rendering")
     args = ap.parse_args(argv)
+
+    if args.catalog:
+        from .asset_catalog import build_catalog
+
+        cat = build_catalog()
+        for g in cat["geojson"]:
+            print(f"{g['file']} ({g['feature_count']} regions)")
+            for f in g["features"]:
+                print(f"  {f['id']:<16} {f['name']:<34} centroid {f['centroid']}")
+        flags = cat["flags"]["builtin"]
+        print("props / badge icons:", ", ".join(cat["props"]))
+        print("sfx:", ", ".join(cat["sfx"]))
+        print("music moods:", ", ".join(cat["music"]))
+        print("flags: custom", cat["flags"]["custom"], "+", f"{len(flags)} built-in two-letter codes" if isinstance(flags, list) else flags)
+        return 0
+    if args.schema:
+        from .models import example_scene_graph
+
+        print(json.dumps({"json_schema": SceneGraph.model_json_schema(), "example": example_scene_graph()}, indent=1))
+        return 0
 
     if args.job_dir:
         return run_job(Path(args.job_dir))
@@ -270,6 +293,21 @@ def cli(argv: Optional[list[str]] = None) -> int:
         from .models import example_scene_graph
 
         graph = SceneGraph.model_validate(example_scene_graph())
+
+    if args.check:
+        import tempfile
+
+        words = split_words(graph.narration)
+        dur = len(words) / 2.5
+        found: list[str] = []
+        tl = compile_timeline(graph, estimate_timings(words, dur), None, dur, Path(tempfile.mkdtemp()), found)
+        print(f"{len(words)} words, roughly {dur:.0f}s of narration, {len(tl['scenes'])} scenes")
+        for sc in tl["scenes"]:
+            print(f"  scene '{sc['scene_id']}' starts at about {sc['start_frame'] / tl['fps']:.1f}s")
+        for w in found:
+            print("warning:", w)
+        print("OK" if not found else f"{len(found)} warning(s): fix the trigger words above")
+        return 0 if not found else 2
 
     if args.preview is not None:
         print(render_preview(graph, args.preview, Path(args.out) / f"preview-scene{args.preview}.png"))
