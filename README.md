@@ -16,6 +16,7 @@ SceneGraph ─▶ TTS (Edge-TTS / ElevenLabs) ─▶ word alignment (faster-whis
 | | Where it renders | How |
 | --- | --- | --- |
 | **From Claude** | your computer | connect the MCP server: [`setup/CLAUDE_SETUP.md`](setup/CLAUDE_SETUP.md) |
+| **From Gemini (Antigravity)** | your computer | [`setup/ANTIGRAVITY_SETUP.md`](setup/ANTIGRAVITY_SETUP.md) (untested) |
 | **On Colab** | Google's machine | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ramiz-moktader/geo-explainer-mcp/blob/main/colab/geo_explainer_colab.ipynb) then paste a SceneGraph JSON |
 
 The Colab notebook has not been run on Colab yet; expect to adjust the setup cell once.
