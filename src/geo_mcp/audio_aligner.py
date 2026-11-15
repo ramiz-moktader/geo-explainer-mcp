@@ -12,6 +12,7 @@ from typing import Callable, Optional
 Log = Optional[Callable[[str], None]]
 
 ELEVEN_MODEL = "eleven_turbo_v2_5"
+EDGE_FALLBACK_VOICE = "en-US-GuyNeural"
 ELEVEN_DEFAULT_VOICE = "JBFqnCBsd6RMkjVDRZzb"  # "George"; override with ELEVENLABS_VOICE_ID
 
 
@@ -93,16 +94,34 @@ def synthesize_narration(text: str, voice: str, out_dir: Path, log: Log = None) 
         return {"path": path, "engine": "elevenlabs", "hints": [], "exact": False}
 
     path = out_dir / "narration.mp3"
-    try:
-        hints = asyncio.run(_edge_tts(text, voice, path))
-    except Exception as e:  # noqa: BLE001 - surface a actionable message
-        raise RuntimeError(
-            f"Edge-TTS failed ({type(e).__name__}: {e}). Check the network connection and voice name "
-            f"'{voice}', set ELEVENLABS_API_KEY, or set GEO_TTS=placeholder for an offline test render."
-        ) from e
-    if not path.exists() or path.stat().st_size < 1000:
-        raise RuntimeError(f"Edge-TTS returned no audio for voice '{voice}'.")
-    return {"path": path, "engine": "edge-tts", "hints": hints, "exact": False}
+    # Microsoft's free endpoint intermittently answers "no audio" (seen on Colab): retry with
+    # pauses, then try a second voice before giving up.
+    import time
+
+    attempts = [(voice, 0), (voice, 3), (voice, 8), (voice, 20)]
+    if voice != EDGE_FALLBACK_VOICE:
+        attempts += [(EDGE_FALLBACK_VOICE, 5), (EDGE_FALLBACK_VOICE, 15)]
+    last: Optional[Exception] = None
+    for i, (v, wait) in enumerate(attempts):
+        if wait:
+            if log:
+                log(f"Edge-TTS gave no audio ({type(last).__name__}); retry {i}/{len(attempts) - 1} in {wait}s"
+                    + ("" if v == voice else f" with voice {v}"))
+            time.sleep(wait)
+        try:
+            path.unlink(missing_ok=True)
+            hints = asyncio.run(_edge_tts(text, v, path))
+            if path.exists() and path.stat().st_size >= 1000:
+                engine = "edge-tts" if v == voice else f"edge-tts (fallback voice {v})"
+                return {"path": path, "engine": engine, "hints": hints, "exact": False}
+            last = RuntimeError("empty audio file")
+        except Exception as e:  # noqa: BLE001
+            last = e
+    raise RuntimeError(
+        f"Edge-TTS failed {len(attempts)} times ({type(last).__name__}: {last}). The free Microsoft voice service "
+        f"may be refusing this network for now: wait a few minutes and try again, check the voice name '{voice}', "
+        "set ELEVENLABS_API_KEY, or set GEO_TTS=placeholder for a test render without a real voice."
+    ) from last
 
 
 # ------------------------------------------------------------------ alignment
