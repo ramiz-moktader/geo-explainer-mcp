@@ -1,0 +1,515 @@
+{
+ "title": "This desert was a sea",
+ "narration": "This desert was a sea. And the ships are still here. In nineteen sixty, the Aral Sea was the fourth largest lake on Earth, almost the size of Ireland. Two rivers kept it alive. Then Soviet planners wanted cotton. They turned both rivers into the desert, and the sea began to starve. The port of Moynaq watched the water walk away, year after year, until its fishing boats sat rusting in the sand. By two thousand seven, nine tenths of the sea was gone. But in the north, Kazakhstan built one dam, and the water came back. So the sea did not die. We turned it off.",
+ "voice": "en-US-AndrewNeural",
+ "music_mood": "tense",
+ "scenes": [
+  {
+   "scene_id": "hook",
+   "start_word": "This desert",
+   "camera": {
+    "center": [
+     60.0,
+     45.2
+    ],
+    "zoom": 6.8,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.0
+   },
+   "polygons": [
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-1960",
+     "fill_color": "#2f8fe0",
+     "border_color": "#ffffff",
+     "opacity": 0.6,
+     "trigger_word": "sea"
+    }
+   ],
+   "characters": [],
+   "labels": [
+    {
+     "text": "Ship graveyard",
+     "coords": [
+      59.9,
+      44.55
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      59.03,
+      43.77
+     ],
+     "trigger_word": "ships"
+    }
+   ],
+   "badges": [],
+   "sfx": [
+    {
+     "sound": "whoosh",
+     "trigger_word": "sea",
+     "volume": 0.6
+    },
+    {
+     "sound": "pop",
+     "trigger_word": "ships",
+     "volume": 0.5
+    }
+   ]
+  },
+  {
+   "scene_id": "giant",
+   "start_word": "In nineteen",
+   "camera": {
+    "center": [
+     62.0,
+     45.5
+    ],
+    "zoom": 4.6,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.4
+   },
+   "polygons": [
+    {
+     "geojson_file": "world_countries.geojson",
+     "feature_id": "KAZ",
+     "fill_color": "#27a85a",
+     "border_color": "#ffffff",
+     "opacity": 0.3
+    },
+    {
+     "geojson_file": "world_countries.geojson",
+     "feature_id": "UZB",
+     "fill_color": "#f0a500",
+     "border_color": "#ffffff",
+     "opacity": 0.3
+    },
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-1960",
+     "fill_color": "#2f8fe0",
+     "border_color": "#ffffff",
+     "opacity": 0.75
+    }
+   ],
+   "characters": [
+    {
+     "id": "kz",
+     "flag_code": "kz",
+     "coords": [
+      73.0,
+      52.5
+     ],
+     "expression": "smug",
+     "action": "idle"
+    },
+    {
+     "id": "uz",
+     "flag_code": "uz",
+     "coords": [
+      70.5,
+      37.0
+     ],
+     "expression": "smug",
+     "action": "idle"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Aral Sea",
+     "coords": [
+      59.8,
+      48.4
+     ],
+     "curve": 0.3,
+     "style": "country",
+     "trigger_word": "Aral"
+    }
+   ],
+   "badges": [
+    {
+     "icon": "crown",
+     "label": "4th largest lake",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "fourth"
+    },
+    {
+     "icon": "water",
+     "label": "68,000 km\u00b2",
+     "screen_pos": [
+      50,
+      22
+     ],
+     "trigger_word": "Ireland"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "ding",
+     "trigger_word": "fourth",
+     "volume": 0.5
+    }
+   ]
+  },
+  {
+   "scene_id": "rivers",
+   "start_word": "Two rivers",
+   "camera": {
+    "center": [
+     61.2,
+     44.6
+    ],
+    "zoom": 5.3,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.2
+   },
+   "polygons": [
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-1960",
+     "fill_color": "#2f8fe0",
+     "border_color": "#ffffff",
+     "opacity": 0.75,
+     "transition_to_color": "#d9b36c",
+     "trigger_word": "starve"
+    }
+   ],
+   "characters": [
+    {
+     "id": "uz",
+     "flag_code": "uz",
+     "coords": [
+      65.6,
+      41.3
+     ],
+     "expression": "smug",
+     "prop": "money_bag",
+     "action": "bounce",
+     "trigger_word": "cotton"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Syr Darya",
+     "coords": [
+      65.3,
+      47.3
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      61.9,
+      45.9
+     ],
+     "trigger_word": "rivers"
+    },
+    {
+     "text": "Amu Darya",
+     "coords": [
+      56.6,
+      41.6
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      59.6,
+      43.6
+     ],
+     "trigger_word": "rivers"
+    }
+   ],
+   "badges": [
+    {
+     "icon": "money_bag",
+     "label": "Cotton",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "cotton"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "pop",
+     "trigger_word": "rivers",
+     "volume": 0.5
+    },
+    {
+     "sound": "thud",
+     "trigger_word": "starve",
+     "volume": 0.8
+    }
+   ]
+  },
+  {
+   "scene_id": "moynaq",
+   "start_word": "The port",
+   "camera": {
+    "center": [
+     59.2,
+     43.95
+    ],
+    "zoom": 8.0,
+    "pitch": 35,
+    "bearing": -15,
+    "transition_sec": 1.8
+   },
+   "polygons": [
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-1960",
+     "fill_color": "#d9b36c",
+     "border_color": "#ffffff",
+     "opacity": 0.35
+    }
+   ],
+   "characters": [
+    {
+     "id": "uz",
+     "flag_code": "uz",
+     "coords": [
+      59.75,
+      43.55
+     ],
+     "expression": "sad",
+     "action": "idle",
+     "trigger_word": "water"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Moynaq",
+     "coords": [
+      58.55,
+      43.5
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      59.03,
+      43.77
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "icon": "ship",
+     "label": "A port with no sea",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "boats"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "whoosh",
+     "trigger_word": "walk",
+     "volume": 0.5
+    },
+    {
+     "sound": "clang",
+     "trigger_word": "rusting",
+     "volume": 0.6
+    }
+   ]
+  },
+  {
+   "scene_id": "gone",
+   "start_word": "By two",
+   "camera": {
+    "center": [
+     60.0,
+     45.2
+    ],
+    "zoom": 6.6,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.6
+   },
+   "polygons": [
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-1960",
+     "fill_color": "#d9b36c",
+     "border_color": "#ffffff",
+     "opacity": 0.5
+    }
+   ],
+   "characters": [],
+   "labels": [
+    {
+     "text": "Aralkum Desert",
+     "coords": [
+      60.0,
+      45.0
+     ],
+     "curve": 0.2,
+     "style": "country",
+     "trigger_word": "gone"
+    }
+   ],
+   "badges": [
+    {
+     "icon": "clock",
+     "label": "2007: 10% left",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "nine"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "thud",
+     "trigger_word": "gone",
+     "volume": 0.8
+    }
+   ]
+  },
+  {
+   "scene_id": "north",
+   "start_word": "But in",
+   "camera": {
+    "center": [
+     60.7,
+     46.35
+    ],
+    "zoom": 7.3,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.6
+   },
+   "polygons": [
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-1960",
+     "fill_color": "#d9b36c",
+     "border_color": "#ffffff",
+     "opacity": 0.3
+    },
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-NORTH",
+     "fill_color": "#d9b36c",
+     "border_color": "#ffffff",
+     "opacity": 0.7,
+     "transition_to_color": "#2f8fe0",
+     "trigger_word": "back"
+    }
+   ],
+   "characters": [
+    {
+     "id": "kz",
+     "flag_code": "kz",
+     "coords": [
+      61.9,
+      47.25
+     ],
+     "expression": "smug",
+     "action": "bounce",
+     "trigger_word": "Kazakhstan"
+    }
+   ],
+   "labels": [
+    {
+     "text": "Kok-Aral Dam",
+     "coords": [
+      59.6,
+      45.55
+     ],
+     "curve": 0,
+     "style": "callout",
+     "pointer_to": [
+      60.77,
+      46.1
+     ],
+     "trigger_word": "dam"
+    }
+   ],
+   "badges": [
+    {
+     "icon": "water",
+     "label": "2005: water returns",
+     "screen_pos": [
+      50,
+      14
+     ],
+     "trigger_word": "water"
+    }
+   ],
+   "sfx": [
+    {
+     "sound": "pop",
+     "trigger_word": "dam",
+     "volume": 0.5
+    },
+    {
+     "sound": "ding",
+     "trigger_word": "back",
+     "volume": 0.6
+    }
+   ]
+  },
+  {
+   "scene_id": "outro",
+   "start_word": "So the",
+   "camera": {
+    "center": [
+     60.0,
+     45.2
+    ],
+    "zoom": 6.6,
+    "pitch": 0,
+    "bearing": 0,
+    "transition_sec": 1.6
+   },
+   "polygons": [
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-1960",
+     "fill_color": "#d9b36c",
+     "border_color": "#ffffff",
+     "opacity": 0.45
+    },
+    {
+     "geojson_file": "aral_sea.geojson",
+     "feature_id": "ARAL-NORTH",
+     "fill_color": "#2f8fe0",
+     "border_color": "#ffffff",
+     "opacity": 0.7
+    }
+   ],
+   "characters": [],
+   "labels": [
+    {
+     "text": "We turned it off",
+     "coords": [
+      60.0,
+      44.6
+     ],
+     "curve": 0.2,
+     "style": "country",
+     "trigger_word": "turned"
+    }
+   ],
+   "badges": [],
+   "sfx": [
+    {
+     "sound": "thud",
+     "trigger_word": "off",
+     "volume": 0.9
+    }
+   ]
+  }
+ ]
+}
